@@ -4,12 +4,17 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+	"start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+	"type": "git",
+	"url" : "https://github.com/tuyendq/quotesapi.git"
   },
   "keywords": [
     "quote"
   ],
-  "author": "",
+  "author": "Tuyen Dang <tuyendq@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
