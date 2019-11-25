@@ -4,7 +4,7 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var sqlite3 = require('sqlite3');
-var port = 3000;
+var port = 8080;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
