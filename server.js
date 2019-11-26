@@ -25,7 +25,7 @@ app.get('/', function(request, response){
     response.send('Get request received at "/"');
 });
 
-// Route /quotes
+// Route GET /quotes
 app.get('/quotes', function(req, res){
     if (req.query.year){
         // res.send('Return a list of quotes from year: ' + req.query.year);
@@ -55,7 +55,7 @@ app.get('/quotes', function(req, res){
     }
 });
 
-// Route /quotes:id
+// Route GET /quotes:id
 app.get('/quotes/:id', function(req, res){
     console.log('Return quote with id: ' + req.params.id);
     // res.send('Return quote with id: ' + req.params.id);
@@ -80,3 +80,13 @@ app.post('/quotes', function(req, res){
         }      
     });
 });
+
+// Route DELETE /quotes:id
+app.del('/quotes/:id',function(req, res){
+	console.log('Delete quote with id: ' + req.params.id);
+	res.send('Delete quote with id' + req.params.id);
+});
+
+
+// Route PUT /quotes:id
+// TODO 
