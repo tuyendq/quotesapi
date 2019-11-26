@@ -82,9 +82,15 @@ app.post('/quotes', function(req, res){
 });
 
 // Route DELETE /quotes:id
-app.del('/quotes/:id',function(req, res){
+app.delete('/quotes/:id', function(req, res){
 	console.log('Delete quote with id: ' + req.params.id);
-	res.send('Delete quote with id' + req.params.id);
+    db.run('DELETE FROM quotes WHERE rowid = ?', [req.params.id], function(err){
+        if(err){
+            console.log(err.message);
+        } else {
+            res.send('Delete quote with id' + req.params.id);
+        }
+    });
 });
 
 
