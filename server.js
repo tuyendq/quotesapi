@@ -31,8 +31,7 @@ app.get('/quotes', function(req, res){
         // res.send('Return a list of quotes from year: ' + req.query.year);
         // db.all('SELECT * FROM quotes WHERE year = 1902', function(err, rows){
         db.all('SELECT * FROM quotes WHERE year = ?', [req.query.year], function(err, rows){    
-            if(err){
-                
+            if(err){               
                 res.send(err.message);
             } else {
                 console.log('Return a list of quotes from year:' + req.query.year);
@@ -95,4 +94,17 @@ app.delete('/quotes/:id', function(req, res){
 
 
 // Route PUT /quotes:id
-// TODO 
+app.put('/quotes/:id', [], function(req, res){
+	let reqId = req.params.id;
+
+	console.log('Update quote with id: ' + reqId);
+	db.run('UPDATE quotes SET quote = ? WHERE rowid = ?', [req.body.quote, reqId], function(err){
+		if(err){
+			console.log('Update error: ' + err.message);
+			res.status(500).json({ message: 'Update error' + err.message });
+		} else {
+			console.log('Update successfully: ' + req.body.quote);
+			res.send('Update successfully: ' + req.body.quote);
+		}
+	});
+});
