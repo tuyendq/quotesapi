@@ -56,14 +56,17 @@ app.get('/quotes', function(req, res){
 
 // Route GET /quotes:id
 app.get('/quotes/:id', function(req, res){
-    console.log('Return quote with id: ' + req.params.id);
+	const reqId = req.params.id;
+    console.log('Return quote with id: ' + reqId);
     // res.send('Return quote with id: ' + req.params.id);
-    db.get('SELECT * FROM quotes WHERE rowid = ?', [req.params.id], function(err, row){
+    db.get('SELECT * FROM quotes WHERE rowid = ?', [reqId], function(err, row){
         if(err){
             res.send(err.message);
+        }else if (!row){ 
+            res.status(404).json({ message: 'Quote not found.'});
         }else{
-            res.json(row);
-        }
+			res.json(row);
+		}
     });
 });
 
@@ -95,16 +98,35 @@ app.delete('/quotes/:id', function(req, res){
 
 // Route PUT /quotes:id
 app.put('/quotes/:id', [], function(req, res){
-	let reqId = req.params.id;
+	const reqId = req.params.id;
+	
+	//get the first quote matching reqId
+	// let quote = quotes.filter(function(quote){
+	//		return quote.id == reqId;
+	// })[0]; 
+	
+	db.get('SELECT * FROM quotes WHERE rowid = ?',[reqId],function(err, row){
+		if (!row){
+			res.status(404).json({ message: 'No quote found.' });
+			console.log('No quote found with id: ' + reqId);	
+		}else{
+			// console.log('Before update: ' + row.author);
+			const keys = Object.keys(req.body);
+			keys.forEach(function(key){
+				row[key] = req.body[key];
+			});
+			console.log('keys values: ' + keys);
+			// console.log('After update: ' + row.author);
 
-	console.log('Update quote with id: ' + reqId);
-	db.run('UPDATE quotes SET quote = ? WHERE rowid = ?', [req.body.quote, reqId], function(err){
-		if(err){
-			console.log('Update error: ' + err.message);
-			res.status(500).json({ message: 'Update error' + err.message });
-		} else {
-			console.log('Update successfully: ' + req.body.quote);
-			res.send('Update successfully: ' + req.body.quote);
+			db.run('UPDATE quotes SET quote = ?, author = ? WHERE rowid = ?', [row.quote, row.author, reqId], function(err){
+				if(err){
+					console.log('Update error: ' + err.message);
+					res.status(500).json({ message: 'Update error' + err.message });
+				} else {
+					console.log('Update successfully: ' + row.quote);
+					res.send('Update successfully: ' + row.quote);
+				}
+			});
 		}
 	});
 });
