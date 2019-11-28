@@ -15,14 +15,27 @@ var quotes = [
 ];
 
 var db = new sqlite3.Database('db/quotes.db');
+const sql = `
+CREATE TABLE IF NOT EXISTS quotes (
+  quote TEXT,
+  author TEXT)`;
+
+db.run(sql, function(err){
+    if(err){
+        console.log(err.message);
+        res.status(500).json({ message: 'No table in database'});
+    } else {
+        console.log('quotes TABLE created successfully!');
+    }
+});
 
 app.listen(port, function(){
     console.log('Express listening on port: ' + port);
 });
 
 // Route /
-app.get('/', function(request, response){
-    response.send('Get request received at "/"');
+app.get('/', function(req, res){
+    res.send('Welcome to Quotes API!');
 });
 
 // Route GET /quotes
@@ -34,20 +47,26 @@ app.get('/quotes', function(req, res){
             if(err){               
                 res.send(err.message);
             } else {
-                console.log('Return a list of quotes from year:' + req.query.year);
-                res.json(rows);
+                if (!row){
+                    res.status(404).json({ message: 'No quote found'});
+                } else {
+                    console.log('Return a list of quotes from year:' + req.query.year);
+                    res.json(rows);
+                }
             }
         });
     } else {
         console.log('Get list of all quotes as json');
-        db.all('SELECT * FROM quotes', function processRows(err, rows){
+        db.all('SELECT rowid, * FROM quotes', function processRows(err, rows){
             if(err){
                 res.send(err.message);
             } else {
-                for (let i = 0; i < rows.length; i++) {
-                    console.log(rows[i].quote);
+                if (!rows){
+                    res.statusCode(404).json({ message: 'No quote found'});
+                } else {
+                    console.log(rows);
+                    res.json(rows);
                 }
-                res.json(rows);
             }
         });
         // res.json(quotes);
@@ -74,7 +93,7 @@ app.get('/quotes/:id', function(req, res){
 app.post('/quotes', function(req, res){
     console.log('Insert a new quote: ' + req.body.quote);
     // res.json(req.body);
-    db.run('INSERT INTO quotes VALUES (?, ?, ?)', [req.body.quote, req.body.author, req.body.year], function(err){
+    db.run('INSERT INTO quotes VALUES (?, ?)', [req.body.quote, req.body.author], function(err){
         if(err){
             console.log(err.message);
         }else{
