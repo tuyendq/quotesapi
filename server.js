@@ -109,7 +109,7 @@ app.delete('/quotes/:id', function(req, res){
         if(err){
             console.log(err.message);
         } else {
-            res.send('Delete quote with id' + req.params.id);
+            res.send('Delete quote with id: ' + req.params.id);
         }
     });
 });
