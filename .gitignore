@@ -61,4 +61,5 @@ typings/
 .next
 
 # database
-db/quotes.db
+# db/quotes.db
+quotes.db
